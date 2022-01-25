@@ -1,5 +1,7 @@
 package vector_go
 
+import "math"
+
 type Vector2d struct {
 	X float64
 	Y float64
@@ -48,5 +50,21 @@ func (v Vector2d) Div(scalar float64) Vector2d {
 	return Vector2d{
 		X: v.X / scalar,
 		Y: v.Y / scalar,
+	}
+}
+
+func (v Vector2d) LenSquared() float64 {
+	return v.X*v.X + v.Y*v.Y
+}
+
+func (v Vector2d) Len() float64 {
+	return math.Sqrt(v.LenSquared())
+}
+
+func (v Vector2d) Normalize() Vector2d {
+	len := v.Len()
+	return Vector2d{
+		X: v.X / len,
+		Y: v.Y / len,
 	}
 }
