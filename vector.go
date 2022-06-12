@@ -7,6 +7,10 @@ type Vector2d struct {
 	Y float64
 }
 
+var (
+	Zero = Vector2d{0, 0}
+)
+
 func NewVec2d(x, y float64) Vector2d {
 	return Vector2d{
 		X: x,
@@ -61,10 +65,17 @@ func (v Vector2d) Len() float64 {
 	return math.Sqrt(v.LenSquared())
 }
 
+func (v Vector2d) SetMag(mag float64) Vector2d {
+	return v.Normalize().Mul(mag)
+}
+
 func (v Vector2d) Normalize() Vector2d {
-	len := v.Len()
+	vLen := v.Len()
+	if vLen == 0 {
+		return Zero
+	}
 	return Vector2d{
-		X: v.X / len,
-		Y: v.Y / len,
+		X: v.X / vLen,
+		Y: v.Y / vLen,
 	}
 }
