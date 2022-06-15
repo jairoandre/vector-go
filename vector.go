@@ -1,6 +1,8 @@
 package vector_go
 
-import "math"
+import (
+	"math"
+)
 
 type Vector2d struct {
 	X float64
@@ -78,4 +80,49 @@ func (v Vector2d) Normalize() Vector2d {
 		X: v.X / vLen,
 		Y: v.Y / vLen,
 	}
+}
+
+func (v Vector2d) Rotate(theta float64) Vector2d {
+	x := math.Cos(theta)*v.X - math.Sin(theta)*v.Y
+	y := math.Sin(theta)*v.X + math.Cos(theta)*v.Y
+	return Vector2d{x, y}
+}
+
+func (v Vector2d) PointsBetween(o Vector2d) []Vector2d {
+	dx := v.X - o.X
+	dy := v.Y - o.Y
+	absDx := math.Abs(dx)
+	absDy := math.Abs(dy)
+	if dx == 0 && dy == 0 {
+		return []Vector2d{}
+	}
+	xDiffIsLarger := absDx > absDy
+	stepX := 1.0
+	if dx < 0 {
+		stepX = -1.0
+	}
+	stepY := 1.0
+	if dy < 0 {
+		stepY = -1.0
+	}
+	longerSideLength := math.Max(absDx, absDy)
+	shorterSideLength := math.Min(absDx, absDy)
+	slope := shorterSideLength / longerSideLength
+	points := make([]Vector2d, 0)
+	for i := 1.0; i <= longerSideLength; i++ {
+		shorterSideIncrease := math.Round(i * slope)
+		xIncrease := 0.0
+		yIncrease := 0.0
+		if xDiffIsLarger {
+			xIncrease = i
+			yIncrease = shorterSideIncrease
+		} else {
+			xIncrease = shorterSideIncrease
+			yIncrease = i
+		}
+		toX := o.X + math.Round(xIncrease*stepX)
+		toY := o.Y + math.Round(yIncrease*stepY)
+		points = append(points, Vector2d{X: toX, Y: toY})
+	}
+	return points
 }
